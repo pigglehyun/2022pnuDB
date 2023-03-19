@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+}
+apply plugin : 'application'
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+mainClassName = "com/javadb/gradle/jabaDBTest01.java"
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group:'junit', name: 'junit', version: '4.12'
+    implementation group : 'mysql', name:'mysql-connector-java',version  : '8.0.31'
+}
+

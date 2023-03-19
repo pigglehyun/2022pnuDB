@@ -1,0 +1,30 @@
+getGrade function
+
+CREATE DEFINER = 'root'@'localhost' FUNCTION 'getGrade'(base int, qty int)
+RETURNS varchar(10) CHARSET utf8mb4 DETERMINISTIC
+BEGIN
+	declare grade varchar(10);
+	if qty > base then set grade = 'A';
+	elseif qty = base then set grade = 'B' ;
+	else set grade = 'C';
+	end if;
+	RETURN grade;
+END
+----------------------------------------------------------------------------------------------------
+getQtyGrade procedure
+
+CREATE DEFINER = 'root'@'localhost' PROCEDURE 'getQtyGrade'(in base int, in ijname varchar(10))
+BEGIN
+	declare stmt varchar(50);
+	declare num int;
+	declare jjname varchar(10);
+	set @jjname = ijname;
+	set @num = base;
+	set @stmt = ('select spj.pno, sum(qty) as tot_qty, getGrade( ? ,sum(qty)) as grade
+			from spj,p,j where j.jname = ? and spj.jno = j.jno and spj.pno = p.pno
+			group by spj.pno;');
+	prepare st from @stmt;
+	execute st using @num, @jjname;
+	deallocate prepare st;
+END
+	

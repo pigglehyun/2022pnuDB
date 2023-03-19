@@ -1,0 +1,14 @@
+4.1) select part.pname, uses.used_qty from supplier, part, project, suppliers, uses where supplier.city = 'busan' and supplier.sname = suppliers.sname
+and suppliers.proj_name = project.pro_name and part.part_no = uses.part_no and uses.used_qty > 10;
+
+4.2) select * from supplier where not exists( select * from project where not exists ( select * from part where not exists(
+select * from can_supply where can_supply.part_no = part.part_no and can_supply.sname = supplier.sname)));
+
+4.3)select * from project where not exists ( select * from supplier where not exists (select * from part where
+not exists ( select * from can_supply where can_supply.sname = supplier.sname and can_supply.part_no = part.part_no
+and supplier.city = 'busan')));
+
+4.4 )
+
+4.5) select * from supplier where not exists( select * from suppliers , project where
+supplier.sname = suppliers.sname and suppliers.proj_name = project.pro_name);

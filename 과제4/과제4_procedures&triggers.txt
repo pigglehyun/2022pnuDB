@@ -1,0 +1,57 @@
+after_order
+
+CREATE DEFINER = 'root' @ 'localhost' PROCEDURE 'after_order' ()
+BEGIN
+	select mydb.order.ono, mydb.order.pno, mydb.order.orderQty, mydb.order.orderDate,
+	stock.currentQty, sale.salesQty, sale.salesDate
+	from mydb.order
+	left join p on mydb.order.pno = p.pno
+	left join stock on stock.pno = mydb.order.pno
+	left join sale on sale.pno = mydb.order.pno;
+END
+------------------------------------------------------------------------------------------------------
+after_cancel
+
+CREATE DEFINER = 'root' @ 'localhost' PROCEDURE 'after_cancel' ()
+BEGIN
+	select orderCancel.ono, orderCancel.pno, orderCancel.orderQty, orderCancel.orderDate,
+	orderCancel.cancelDate, stock.currentQty
+	from orderCancel.
+	left join stock on stock.pno = orderCancel..pno
+END
+
+------------------------------------------------------------------------------------------------------
+order
+
+CREATE DEFINER = 'root' @ 'localhost' TRIGGER 'order_AFTER_INSERT' AFTER INSERT ON
+'order'	FOR EACH ROW 
+BEGIN
+	update mydb.stock set currentQty = currentQty - new.orderQty
+	where pno = new.pno;
+	insert into sale values(new.pno, new.orderQty, new.orderDate);
+END
+
+CREATE DEFINER = 'root' @ 'localhost' TRIGGER 'order_AFTER_DELETE' AFTER DELETE ON
+'order'	FOR EACH ROW 
+BEGIN
+	insert into orderCancel values(old.ono, old.pno, old.orderQty,old.orderDate,'1127');
+END
+-------------------------------------------------------------------------------------------------------
+orderCancel
+
+CREATE DEFINER = 'root' @ 'localhost' TRIGGER 'orderCancel_AFTER_INSERT' AFTER INSERT ON
+'orderCancel'	FOR EACH ROW 
+BEGIN
+	delete from sale where sale.pno = new.pno and sale.salesQty = new.orderQty;
+	update stock set currentQty = currentQty + new.orderQty
+	where new.pno = stock.pno;
+END
+-------------------------------------------------------------------------------------------------------
+sale
+
+CREATE DEFINER = 'root' @ 'localhost' TRIGGER 'sale_AFTER_UPDATE' AFTER UPDATE ON
+'sale'	FOR EACH ROW 
+BEGIN
+	update stock set currentQty = currentQty - new.slaesQty where pno = new.pno;
+END
+
